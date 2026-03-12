@@ -1,0 +1,1 @@
+# Composer Plugin thinkphp-installer

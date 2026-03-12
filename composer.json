@@ -1,0 +1,33 @@
+{
+  "name": "cdyun/thinkphp-installer",
+  "description": "composer-plugin",
+  "license": "MIT",
+  "keywords": [
+    "php",
+    "thinkphp",
+    "thinkphp-installer",
+    "cdyun"
+  ],
+  "authors": [
+    {
+      "name": "cdyun",
+      "email": "121625706@qq.com",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": "^8.0",
+    "composer-plugin-api": "^1.0||^2.0"
+  },
+  "require-dev": {
+    "composer/composer": "^1.0||^2.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "think\\composer\\": "src"
+    }
+  },
+  "extra": {
+    "class": "think\\composer\\Plugin"
+  }
+}
