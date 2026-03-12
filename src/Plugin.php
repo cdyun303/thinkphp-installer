@@ -12,31 +12,56 @@ namespace think\composer;
 use Composer\Composer;
 use Composer\IO\IOInterface;
 use Composer\Plugin\PluginInterface;
-
+use Composer\Util\Platform;
 
 class Plugin implements PluginInterface
 {
+    /**
+     * @param \Composer\Composer $composer
+     * @param \Composer\IO\IOInterface $io
+     */
     public function activate(Composer $composer, IOInterface $io)
     {
-        $manager = $composer->getInstallationManager();
 
-        //框架核心
-        $manager->addInstaller(new ThinkFramework($io, $composer));
+        // 根应用包
+        $package = $this->addServer($composer)->getPackage();
 
-        //单元测试
-        $manager->addInstaller(new ThinkTesting($io, $composer));
+        // 注册安装器
+        $composer->getInstallationManager()->addInstaller(new Installer($io, $composer));
 
-        //扩展
-        $manager->addInstaller(new ThinkExtend($io, $composer));
+        // 读取根应用配置
+        $config = json_decode(file_get_contents('composer.json'), true);
+        if (empty($config['type']) && empty($config['name'])) {
+            method_exists($package, 'setType') && $package->setType('project');
+        }
+
+        // 读取项目根参数
+        if ($package->getType() === 'project') {
+
+            // 注册自动加载
+            $auto = $package->getAutoload();
+            if (empty($auto)) $package->setAutoload([
+                'psr-0' => ['' => 'extend'], 'psr-4' => ['app\\' => 'app'],
+            ]);
+
+        }
     }
 
     public function deactivate(Composer $composer, IOInterface $io)
     {
-
     }
 
     public function uninstall(Composer $composer, IOInterface $io)
     {
+    }
 
+    /**
+     * 增加插件服务 ( 需上报应用标识信息 )
+     * @param \Composer\Composer $composer
+     * @return \Composer\Composer
+     */
+    private function addServer(Composer $composer): Composer
+    {
+        return $composer;
     }
 }
